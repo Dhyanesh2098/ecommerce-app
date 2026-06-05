@@ -27,7 +27,12 @@ const orderSchema = new mongoose.Schema({
 
     status: {
         type: String,
-        default: "Pending"
+        default: "Processing"
+    },
+
+    estimatedDelivery: {
+        type: String,
+        default: "3-5 business days"
     }
 }, {
     timestamps: true
