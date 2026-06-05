@@ -22,7 +22,7 @@ ChartJS.register(
   Legend
 );
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://ecommerce-backend-3rfp.onrender.com/api";
 
 function AdminProducts({ products, fetchProducts, token }) {
   const emptyForm = {

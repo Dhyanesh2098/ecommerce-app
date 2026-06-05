@@ -9,7 +9,7 @@ import Orders from "./pages/Orders";
 import Profile from "./pages/Profile";
 import AdminProducts from "./pages/AdminProducts";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://ecommerce-backend-3rfp.onrender.com/api";
 
 function App() {
   const [products, setProducts] = useState([]);
