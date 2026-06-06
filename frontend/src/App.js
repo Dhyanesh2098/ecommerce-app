@@ -215,7 +215,10 @@ function App() {
       setPurchasedProducts(cartCopy);
       setReviewProductId(cartCopy[0]?._id || "");
       setCart([]);
-      setShowReviewPopup(true);
+
+      setTimeout(() => {
+        setShowReviewPopup(true);
+      }, 3000);
 
       return true;
     } catch (error) {
