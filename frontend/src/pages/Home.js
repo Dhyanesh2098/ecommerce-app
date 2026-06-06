@@ -33,6 +33,11 @@ function Home({
     startIndex + PRODUCTS_PER_PAGE
   );
 
+  const handleAddToCart = (product) => {
+    if (product.stock <= 0) return;
+    addToCart(product);
+  };
+
   return (
     <>
       <section style={heroStyle(darkMode)}>
@@ -83,6 +88,7 @@ function Home({
       <div style={productGridStyle}>
         {paginatedProducts.map((product) => {
           const wished = wishlist.some((item) => item._id === product._id);
+          const outOfStock = product.stock <= 0;
 
           return (
             <div key={product._id} style={cardStyle(darkMode)}>
@@ -96,20 +102,27 @@ function Home({
                 ⭐ {product.averageRating ? product.averageRating.toFixed(1) : "0.0"} / 5
               </p>
 
-              <p>
-                <strong>Reviews:</strong> {product.totalReviews || 0}
-              </p>
-
+              <p><strong>Reviews:</strong> {product.totalReviews || 0}</p>
               <p><strong>Category:</strong> {product.category}</p>
-              <p><strong>Stock:</strong> {product.stock}</p>
+
+              {outOfStock ? (
+                <p style={outOfStockTextStyle}>❌ Out of Stock</p>
+              ) : (
+                <p style={stockTextStyle}><strong>Stock:</strong> {product.stock}</p>
+              )}
+
               <h2>₹{product.price}</h2>
 
               <button onClick={() => setSelectedProduct(product)} style={buttonStyle("#111827")}>
                 View Details
               </button>
 
-              <button onClick={() => addToCart(product)} style={buttonStyle("#2563eb")}>
-                Add to Cart
+              <button
+                onClick={() => handleAddToCart(product)}
+                disabled={outOfStock}
+                style={buttonStyle(outOfStock ? "#9ca3af" : "#2563eb", outOfStock)}
+              >
+                {outOfStock ? "❌ Out of Stock" : "Add to Cart"}
               </button>
 
               <button
@@ -171,7 +184,13 @@ function Home({
                 <h2>{selectedProduct.name}</h2>
                 <p>{selectedProduct.description}</p>
                 <p><strong>Category:</strong> {selectedProduct.category}</p>
-                <p><strong>Stock:</strong> {selectedProduct.stock}</p>
+
+                {selectedProduct.stock <= 0 ? (
+                  <p style={outOfStockTextStyle}>❌ Out of Stock</p>
+                ) : (
+                  <p style={stockTextStyle}><strong>Stock:</strong> {selectedProduct.stock}</p>
+                )}
+
                 <p>
                   <strong>Average Rating:</strong>{" "}
                   ⭐ {selectedProduct.averageRating ? selectedProduct.averageRating.toFixed(1) : "0.0"} / 5
@@ -179,8 +198,15 @@ function Home({
                 <p><strong>Total Reviews:</strong> {selectedProduct.totalReviews || 0}</p>
                 <h2>₹{selectedProduct.price}</h2>
 
-                <button onClick={() => addToCart(selectedProduct)} style={buttonStyle("#2563eb")}>
-                  Add to Cart
+                <button
+                  onClick={() => handleAddToCart(selectedProduct)}
+                  disabled={selectedProduct.stock <= 0}
+                  style={buttonStyle(
+                    selectedProduct.stock <= 0 ? "#9ca3af" : "#2563eb",
+                    selectedProduct.stock <= 0
+                  )}
+                >
+                  {selectedProduct.stock <= 0 ? "❌ Out of Stock" : "Add to Cart"}
                 </button>
               </div>
             </div>
@@ -294,6 +320,16 @@ const imageStyle = {
   borderRadius: "10px",
 };
 
+const stockTextStyle = {
+  color: "#16a34a",
+  fontWeight: "bold",
+};
+
+const outOfStockTextStyle = {
+  color: "#dc2626",
+  fontWeight: "bold",
+};
+
 const reviewBoxStyle = (darkMode) => ({
   marginTop: "25px",
   padding: "20px",
@@ -347,15 +383,16 @@ const modalCloseButtonStyle = {
   cursor: "pointer",
 };
 
-const buttonStyle = (bg) => ({
+const buttonStyle = (bg, disabled = false) => ({
   backgroundColor: bg,
   color: "white",
   border: "none",
   padding: "12px",
   borderRadius: "8px",
-  cursor: "pointer",
+  cursor: disabled ? "not-allowed" : "pointer",
   width: "100%",
   marginBottom: "8px",
+  opacity: disabled ? 0.75 : 1,
 });
 
 export default Home;
