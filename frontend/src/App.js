@@ -214,6 +214,22 @@ function App() {
       setOrders([newOrder, ...orders]);
       setPurchasedProducts(cartCopy);
       setReviewProductId(cartCopy[0]?._id || "");
+
+      setProducts((prevProducts) =>
+        prevProducts.map((product) => {
+          const purchasedItem = cartCopy.find((item) => item._id === product._id);
+
+          if (purchasedItem) {
+            return {
+              ...product,
+              stock: product.stock - purchasedItem.quantity,
+            };
+          }
+
+          return product;
+        })
+      );
+
       setCart([]);
 
       setTimeout(() => {
@@ -222,7 +238,7 @@ function App() {
 
       return true;
     } catch (error) {
-      alert("Order failed.");
+      alert(error.response?.data?.message || "Order failed.");
       console.log(error);
       return false;
     }
