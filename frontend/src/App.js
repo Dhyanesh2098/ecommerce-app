@@ -180,12 +180,12 @@ function App() {
   const checkout = async () => {
     if (cart.length === 0) {
       alert("Your cart is empty.");
-      return;
+      return false;
     }
 
     if (!token) {
       alert("Please login before checkout.");
-      return;
+      return false;
     }
 
     try {
@@ -216,10 +216,12 @@ function App() {
       setReviewProductId(cartCopy[0]?._id || "");
       setCart([]);
       setShowReviewPopup(true);
-      alert("Order saved to MongoDB successfully!");
+
+      return true;
     } catch (error) {
       alert("Order failed.");
       console.log(error);
+      return false;
     }
   };
 
