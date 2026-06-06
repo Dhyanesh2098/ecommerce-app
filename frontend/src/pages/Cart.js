@@ -21,11 +21,13 @@ function Cart({ cart, increaseQuantity, decreaseQuantity, checkout, darkMode }) 
   const confirmPayment = async () => {
     setShowPaymentBox(false);
 
-    await checkout();
+    const success = await checkout();
 
-    showMessage(
-      `✅ Payment successful using ${paymentMethod}. Order placed successfully! Estimated delivery: 30 minutes.`
-    );
+    if (success) {
+      showMessage(
+        `✅ Payment successful using ${paymentMethod}. Order placed successfully! Estimated delivery: 30 minutes.`
+      );
+    }
   };
 
   return (
@@ -46,10 +48,17 @@ function Cart({ cart, increaseQuantity, decreaseQuantity, checkout, darkMode }) 
             </div>
 
             <div>
-              <button onClick={() => decreaseQuantity(item._id)} style={qtyButtonStyle}>
+              <button
+                onClick={() => decreaseQuantity(item._id)}
+                style={qtyButtonStyle}
+              >
                 -
               </button>
-              <button onClick={() => increaseQuantity(item._id)} style={qtyButtonStyle}>
+
+              <button
+                onClick={() => increaseQuantity(item._id)}
+                style={qtyButtonStyle}
+              >
                 +
               </button>
             </div>
@@ -65,6 +74,7 @@ function Cart({ cart, increaseQuantity, decreaseQuantity, checkout, darkMode }) 
             showMessage("⚠️ Your cart is empty.");
             return;
           }
+
           setShowPaymentBox(true);
         }}
         style={buttonStyle}
