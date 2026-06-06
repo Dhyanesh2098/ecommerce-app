@@ -3,20 +3,35 @@ import React, { useState } from "react";
 function Cart({ cart, increaseQuantity, decreaseQuantity, checkout, darkMode }) {
   const [showPaymentBox, setShowPaymentBox] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("Paytm");
+  const [message, setMessage] = useState("");
 
   const totalAmount = cart.reduce(
     (total, item) => total + item.price * item.quantity,
     0
   );
 
-  const confirmPayment = () => {
-    alert(`Payment successful using ${paymentMethod}`);
+  const showMessage = (text) => {
+    setMessage(text);
+
+    setTimeout(() => {
+      setMessage("");
+    }, 3000);
+  };
+
+  const confirmPayment = async () => {
     setShowPaymentBox(false);
-    checkout();
+
+    await checkout();
+
+    showMessage(
+      `✅ Payment successful using ${paymentMethod}. Order placed successfully! Estimated delivery: 30 minutes.`
+    );
   };
 
   return (
     <section style={sectionStyle(darkMode)}>
+      {message && <div style={successMessageStyle}>{message}</div>}
+
       <h2>Shopping Cart</h2>
 
       {cart.length === 0 ? (
@@ -27,6 +42,7 @@ function Cart({ cart, increaseQuantity, decreaseQuantity, checkout, darkMode }) 
             <div>
               <strong>{item.name}</strong>
               <p>₹{item.price} × {item.quantity}</p>
+              <p style={deliveryTextStyle}>Estimated Delivery: 30 minutes</p>
             </div>
 
             <div>
@@ -46,7 +62,7 @@ function Cart({ cart, increaseQuantity, decreaseQuantity, checkout, darkMode }) 
       <button
         onClick={() => {
           if (cart.length === 0) {
-            alert("Your cart is empty.");
+            showMessage("⚠️ Your cart is empty.");
             return;
           }
           setShowPaymentBox(true);
@@ -68,6 +84,7 @@ function Cart({ cart, increaseQuantity, decreaseQuantity, checkout, darkMode }) 
 
             <h2>Select Payment Method</h2>
             <p>Total Payable: ₹{totalAmount}</p>
+            <p style={deliveryTextStyle}>Estimated Delivery: 30 minutes</p>
 
             <select
               value={paymentMethod}
@@ -106,6 +123,21 @@ const sectionStyle = (darkMode) => ({
   borderRadius: "12px",
   boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
 });
+
+const successMessageStyle = {
+  backgroundColor: "#d4edda",
+  color: "#155724",
+  border: "1px solid #c3e6cb",
+  padding: "12px",
+  borderRadius: "8px",
+  marginBottom: "15px",
+  fontWeight: "bold",
+};
+
+const deliveryTextStyle = {
+  color: "#16a34a",
+  fontWeight: "bold",
+};
 
 const cartRowStyle = (darkMode) => ({
   display: "flex",
